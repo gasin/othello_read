@@ -3,7 +3,7 @@
 #ifndef INOUT_H
 #define INOUT_H
 
-void input(bool& first_turn, bitset<64>& first_black, bitset<64>& first_white);
+void input(bool& first_turn, ull& first_black, ull& first_white);
 void output(int result);
 
 #endif

@@ -7,6 +7,6 @@ extern unordered_map<ll, int> hash_table;
 extern ll random_number[RANDOM_NUMBER];
 
 void init_random();
-ll make_hash(bitset<64> black, bitset<64> white, bool now);
+ll make_hash(ull black, ull white, bool now);
 
 #endif

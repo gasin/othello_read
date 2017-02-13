@@ -11,12 +11,12 @@ void init_random(){
     }
 }
 
-ll make_hash(bitset<64> black, bitset<64> white, bool now){
+ll make_hash(ull black, ull white, bool now){
     ll ret = 0;
     int pointer = 0;
     rep(i,64){
-        if(black[i]) ret ^= random_number[pointer];
-        else if(white[i]) ret ^= random_number[pointer+1];
+        if(black&(1ULL<<i)) ret ^= random_number[pointer];
+        else if(white&(1ULL<<i)) ret ^= random_number[pointer+1];
         pointer += 2;
     }
     if(now) ret ^= random_number[pointer];

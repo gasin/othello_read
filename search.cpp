@@ -2,67 +2,240 @@
 #include "hash.h"
 #include "change_board.h"
 
-int black_final_search(bitset<64>& black, bitset<64>& white, int h, int w){
-    int ret = black.count()-white.count()+1;
+int black_final_search(ull& black, ull& white, int h, int w){
+#ifdef DEBUG
+    final_search_counter++;
+#endif
+    int ret = __builtin_popcountll(black)-__builtin_popcountll(white)+1;
     int tmp = ret;
     rep(i,8){
         int hh = h+dh[i], ww = w+dw[i];
         if(hh >= 8 || hh < 0 || ww >= 8 || ww < 0) continue;
-        if(!white[(hh<<3)+ww]) continue;
+        if(!(white&(1ULL<<((hh<<3)+ww)))) continue;
         for(int j = 1;; j++){
             hh += dh[i]; ww += dw[i];
             if(hh >= 8 || hh < 0 || ww >= 8 || ww < 0) break;
-            if(white[(hh<<3)+ww]) continue;
-            if(black[(hh<<3)+ww]){
+            if(white&(1ULL<<((hh<<3)+ww))) continue;
+            if(black&(1ULL<<((hh<<3)+ww))){
                 ret += j*2;
             }
             break;
         }
     }
+    /*
+    int hh = h+1, ww = w;
+    if(hh <= 6 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh++;
+            if(hh >= 8) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    hh = h+1; ww = w+1;
+    if(hh <= 6 && ww <= 6 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh++; ww++;
+            if(hh >= 8 || ww >= 8) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    hh = h; ww = w+1;
+    if(ww <= 6 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            ww++;
+            if(ww >= 8) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2; 
+            break;
+        }
+    }
+    hh = h-1; ww = w+1;
+    if(hh >= 1 && ww <= 6 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh--; ww++;
+            if(hh < 0 || ww >= 8) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    hh = h-1; ww = w;
+    if(hh >= 1 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh--;
+            if(hh < 0) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    hh = h-1; ww = w-1;
+    if(hh >= 1 && ww >= 1 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh--; ww--;
+            if(hh < 0 || ww < 0) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    hh = h; ww = w-1;
+    if(ww >= 1 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            ww--;
+            if(ww < 0) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    hh = h+1; ww = w-1;
+    if(hh <= 6 && ww >= 1 && white[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh++; ww--;
+            if(hh >= 8 || ww < 0) break;
+            if(white[(hh<<3)+ww]) continue;
+            if(black[(hh<<3)+ww]) ret += j*2;
+            break;
+        }
+    }
+    */
+
     if(ret == tmp) return INF;
     return ret;
 }
 
-int white_final_search(bitset<64>& black, bitset<64>& white, int h, int w){
-    int ret = black.count()-white.count()-1;
+int white_final_search(ull& black, ull& white, int h, int w){
+#ifdef DEBUG
+    final_search_counter++;
+#endif
+    int ret = __builtin_popcountll(black)-__builtin_popcountll(white)-1;
     int tmp = ret;
     rep(i,8){
         int hh = h+dh[i], ww = w+dw[i];
         if(hh >= 8 || hh < 0 || ww >= 8 || ww < 0) continue;
-        if(!black[(hh<<3)+ww]) continue;
+        if(!(black&(1ULL<<((hh<<3)+ww)))) continue;
         for(int j = 1;; j++){
             hh += dh[i]; ww += dw[i];
             if(hh >= 8 || hh < 0 || ww >= 8 || ww < 0) break;
-            if(black[(hh<<3)+ww]) continue;
-            if(white[(hh<<3)+ww]){
+            if(black&(1ULL<<((hh<<3)+ww))) continue;
+            if(white&(1ULL<<((hh<<3)+ww))){
                 ret -= j*2;
             }
             break;
         }
     }
+    /*
+    int hh = h+1, ww = w;
+    if(hh <= 6 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh++;
+            if(hh >= 8) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    hh = h+1; ww = w+1;
+    if(hh <= 6 && ww <= 6 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh++; ww++;
+            if(hh >= 8 || ww >= 8) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    hh = h; ww = w+1;
+    if(ww <= 6 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            ww++;
+            if(ww >= 8) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2; 
+            break;
+        }
+    }
+    hh = h-1; ww = w+1;
+    if(hh >= 1 && ww <= 6 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh--; ww++;
+            if(hh < 0 || ww >= 8) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    hh = h-1; ww = w;
+    if(hh >= 1 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh--;
+            if(hh < 0) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    hh = h-1; ww = w-1;
+    if(hh >= 1 && ww >= 1 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh--; ww--;
+            if(hh < 0 || ww < 0) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    hh = h; ww = w-1;
+    if(ww >= 1 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            ww--;
+            if(ww < 0) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    hh = h+1; ww = w-1;
+    if(hh <= 6 && ww >= 1 && black[(hh<<3)+ww]){
+        for(int j = 1;; j++){
+            hh++; ww--;
+            if(hh >= 8 || ww < 0) break;
+            if(black[(hh<<3)+ww]) continue;
+            if(white[(hh<<3)+ww]) ret -= j*2;
+            break;
+        }
+    }
+    */
     if(ret == tmp) return INF;
     return ret;
 }
 
-int unhash_search(bitset<64> black, bitset<64> white, int empty[EMPTY_AREA+1], bool now, bool suc){
-    int bit_count = (black|white).count();
-    if(bit_count == 64) return black.count()-white.count();
+int unhash_search(ull black, ull white, int empty[EMPTY_AREA+1], bool now, bool suc){
+    int bit_count = __builtin_popcountll(black|white);
+    if(bit_count == 64) return __builtin_popcountll(black)-__builtin_popcountll(white);
     if(bit_count == 63){
         int f;
         if(now) f = black_final_search(black,white,empty[0]/8,empty[0]%8);
         else f = white_final_search(black,white,empty[0]/8,empty[0]%8);
         if(f == INF){
             if(suc){
-                return black.count()-white.count();
+                return __builtin_popcount(black)-__builtin_popcount(white);
             }
             return unhash_search(black,white,empty,now^1,true);
         }
         return f;
     }
+#ifdef DEBUG
+    unhash_search_counter++;
+#endif
     
     bool draw = false;
     bool can_put = false;
-    bitset<64> newblack(0), newwhite(0);
     int next_empty[EMPTY_AREA+1];
     for(int u = 1; u < EMPTY_AREA+1; u++){
         if(empty[u] == -1){
@@ -75,7 +248,7 @@ int unhash_search(bitset<64> black, bitset<64> white, int empty[EMPTY_AREA+1], b
         if(empty[u] < 0) break;
         if(u) next_empty[u-1] = empty[u-1];
         int i = empty[u]/8, j = empty[u]%8;
-        newblack = black; newwhite = white;
+        ull newblack = black, newwhite = white;
         if(!unhash_change_board(newblack,newwhite,now,i,j)){
             continue;
         }
@@ -95,33 +268,34 @@ int unhash_search(bitset<64> black, bitset<64> white, int empty[EMPTY_AREA+1], b
         else return 1;
     }
     if(suc){
-        return black.count()-white.count();
+        return __builtin_popcountll(black)-__builtin_popcountll(white);
     }
     return unhash_search(black,white,empty,now^1,true);
 }
 
-int hash_search(bitset<64> black, bitset<64> white, int empty[EMPTY_AREA+1], bool now, bool suc, ll hasher, int depth){
-    int bit_count = (black|white).count();
-    if(bit_count == 64) return black.count()-white.count();
+int hash_search(ull black, ull white, int empty[EMPTY_AREA+1], bool now, bool suc, ll hasher, int depth){
+    int bit_count = __builtin_popcountll(black|white);
+    if(bit_count == 64) return __builtin_popcountll(black)-__builtin_popcountll(white);
     if(bit_count == 63){
         int f;
         if(now) f = black_final_search(black,white,empty[0]/8,empty[0]%8);
         else f = white_final_search(black,white,empty[0]/8,empty[0]%8);
         if(f == INF){
             if(suc){
-                return black.count()-white.count();
+                return __builtin_popcount(black)-__builtin_popcountll(white);
             }
             return hash_search(black,white,empty,now^1,true,hasher,depth);
         }
         return f;
     }
-    
     if(hash_table.count(hasher)){
         return hash_table[hasher];
     }
+#ifdef DEBUG
+    hash_search_counter++;
+#endif
     bool draw = false;
     bool can_put = false;
-    bitset<64> newblack(0), newwhite(0);
     int next_empty[EMPTY_AREA+1];
     for(int u = 1; u < EMPTY_AREA+1; u++){
         if(empty[u] == -1){
@@ -135,7 +309,7 @@ int hash_search(bitset<64> black, bitset<64> white, int empty[EMPTY_AREA+1], boo
         if(u) next_empty[u-1] = empty[u-1];
         int i = empty[u]/8, j = empty[u]%8;
         ll new_hasher = hasher;
-        newblack = black; newwhite = white;
+        ull newblack = black, newwhite = white;
         if(!hash_change_board(newblack,newwhite,now,i,j,new_hasher)){
             continue;
         }
@@ -160,34 +334,33 @@ int hash_search(bitset<64> black, bitset<64> white, int empty[EMPTY_AREA+1], boo
         else return hash_table[hasher] = 1;
     }
     if(suc){
-        return hash_table[hasher] = black.count()-white.count();
+        return hash_table[hasher] = __builtin_popcountll(black)-__builtin_popcountll(white);
     }
-    hasher ^= random_number[64*2];
-    return hash_table[hasher] = hash_search(black,white,empty,now^1,true,hasher,depth);
+    return hash_table[hasher] = hash_search(black,white,empty,now^1,true,hasher^random_number[64*2],depth);
 }
 
-int firstsearch(bitset<64> black, bitset<64> white, bool now){
+int firstsearch(ull black, ull white, bool now){
     int ret = INF;
     int empty[EMPTY_AREA+1], next_empty[EMPTY_AREA+1];
     int counter = 0;
-    rep(i,8) rep(j,8) if(!(black|white)[i*8+j]){
+    rep(i,8) rep(j,8) if(!((black|white)&(1ULL<<(i*8+j)))){
         if(counter) next_empty[counter-1] = i*8+j;
         empty[counter++] = i*8+j;
     }
     empty[counter] = -1;
     next_empty[counter-1] = -1;
     ll hasher = make_hash(black, white, now);
-    bitset<64> newblack(0), newwhite(0);
     rep(u,EMPTY_AREA+1){
         if(empty[u] < 0) break;
         if(u) next_empty[u-1] = empty[u-1];
         int i = empty[u]/8, j = empty[u]%8;
         ll new_hasher = hasher;
-        newblack = black; newwhite = white;
+        ull newblack = black, newwhite = white;
         if(!hash_change_board(newblack,newwhite,now,i,j,new_hasher)){
         //if(!unhash_change_board(newblack,newwhite,now,i,j)){
             continue;
         }
+        cout << i << " " << j << " " << hash_table.size() << endl;
         int rec = hash_search(newblack,newwhite,next_empty,now^1,false,new_hasher,0);
         //int rec = unhash_search(newblack,newwhite,next_empty,now^1,false);
         if(rec == 0) ret = -(empty[u]+1);

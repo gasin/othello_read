@@ -1,14 +1,14 @@
 #include "inout.h"
 
-void input(bool& first_turn, bitset<64>& black, bitset<64>& white){
+void input(bool& first_turn, ull& black, ull& white){
     cin >> first_turn;
     char tmp;
     rep(i,8) rep(j,8){
         cin >> tmp;
         if(tmp == '1'){
-            black.set(i*8+j);
+            black |= (1ULL<<(i*8+j));
         } else if(tmp == '2'){
-            white.set(i*8+j);
+            white |= (1ULL<<(i*8+j));
         }
     }
 }
