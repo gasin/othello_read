@@ -2,6 +2,7 @@
 #include "search.h"
 #include "hash.h"
 #include "inout.h"
+#include "preprocess.h"
 
 #ifdef DEBUG
 ll hash_search_counter = 0;
@@ -16,6 +17,7 @@ int main(){
     start = chrono::system_clock::now();
     
     init_random();
+    preprocess();
 
     bool first_turn; //1..black, 0..white
     ull black = 0, white = 0;
@@ -31,7 +33,7 @@ int main(){
     printf("time: %f\n",elapsed);
     
 #ifdef DEBUG
-    cout << "hash_table: " << hash_table.size() << endl;
+    //cout << "hash_table: " << hash_table.size() << endl;
     cout << "hash_search_counter: " << hash_search_counter << endl;
     cout << "unhash_search_counter: " << unhash_search_counter << endl;
     cout << "final_search_counter: " << final_search_counter << endl;

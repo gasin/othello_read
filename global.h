@@ -11,7 +11,7 @@ typedef pair<ll, ll> P;
 
 static const int INF = 10000;
 static const int EMPTY_AREA = 30;
-static const int HASH_DEPTH = 10;
+static const int HASH_DEPTH = 12;
 static const int RANDOM_NUMBER = 300;
 static const int dh[8] = {1,1,0,-1,-1,-1,0,1};
 static const int dw[8] = {0,1,1,1,0,-1,-1,-1}; 
