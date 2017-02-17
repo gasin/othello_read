@@ -2,7 +2,6 @@
 #include "search.h"
 #include "hash.h"
 #include "inout.h"
-#include "preprocess.h"
 
 #ifdef DEBUG
 ll hash_search_counter = 0;
@@ -17,13 +16,14 @@ int main(){
     start = chrono::system_clock::now();
     
     init_random();
-    preprocess();
 
     bool first_turn; //1..black, 0..white
     ull black = 0, white = 0;
     input(first_turn, black, white);
     
-    int result = firstsearch(black, white, first_turn);
+    int result;
+    if(first_turn) result = firstsearch(black,white);
+    else result = firstsearch(white,black);
     
     output(result);
 

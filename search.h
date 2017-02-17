@@ -2,10 +2,10 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
-int black_final_search(ull& black, ull& white, int h, int w);
-int white_final_search(ull& black, ull& white, int h, int w);
-int unhash_search(ull black, ull white, int empty[EMPTY_AREA+1], bool now, bool suc);
-int hash_search(ull black, ull white, int empty[EMPTY_AREA+1], bool now, bool suc, ll hasher, int depth);
-int firstsearch(ull black, ull white, bool now);
+int flip_count(int pos, ull me, ull op);
+int final_search(ull me, ull op, int z);
+int unhash_search(ull me, ull op, int empty[EMPTY_AREA+1], bool suc);
+int hash_search(ull me, ull op, int empty[EMPTY_AREA+1], bool suc, int depth);
+int firstsearch(ull me, ull op);
 
 #endif
