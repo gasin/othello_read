@@ -2,6 +2,7 @@
 #include "hash.h"
 #include "change_board.h"
 
+
 inline int flip_count(int pos, ull me, ull op){
     ull flipped, outflank, mask;
     int ret = 0;
@@ -42,6 +43,14 @@ inline int flip_count(int pos, ull me, ull op){
     return ret;
 }
 
+inline int how_many_canput(ull me, ull op, int empty[EMPTY_AREA+1], int empty_count){
+    int ret = 0;
+    rep(i,empty_count){
+        if((1ULL<<empty[i])&(me|op)) continue;
+        if(flip_count(empty[i],me,op)) ret++;
+    }
+    return ret;
+}
 
 inline int final_search(ull me, ull op, int z){
 #ifdef DEBUG
@@ -70,18 +79,44 @@ int unhash_search(ull me, ull op, int empty[EMPTY_AREA+1], bool suc){
 #endif
     
     empty_count = 64-empty_count;
-    int next_empty[EMPTY_AREA+1];
     bool draw = false, can_put = false;
-    for(int u = 1; u < empty_count; u++) next_empty[u-1] = empty[u];
-    for(int u = 0; u < empty_count; u++){
-        if(u) next_empty[u-1] = empty[u-1];
-        ull newme = me, newop = op;
-        if(!unhash_change_board(newme,newop,empty[u])) continue;
-        
-        can_put = true;
-        int rec = unhash_search(newop,newme,next_empty,false);
-        if(rec < 0) return 1;
-        if(rec == 0) draw = true;
+    int next_empty[EMPTY_AREA+1];
+    if(empty_count > 6){
+        pair<int,int> now_empty[EMPTY_AREA+1];
+        rep(i,empty_count) now_empty[i].second = empty[i];
+        rep(u,empty_count){
+            ull newme = me, newop = op;
+            if(!unhash_change_board(newme,newop,empty[u])){
+                now_empty[u].first = 100;
+                continue;
+            }
+            now_empty[u].first = how_many_canput(newop, newme, empty, empty_count);
+            can_put = true;
+        }
+        sort(now_empty,now_empty+empty_count);
+        for(int u = 1; u < empty_count; u++) next_empty[u-1] = now_empty[u].second;
+        rep(u,empty_count){
+            if(now_empty[u].first == 100) break;
+            if(u) next_empty[u-1] = now_empty[u-1].second;
+            ull newme = me, newop = op;
+            unhash_change_board(newme,newop,now_empty[u].second);
+            int rec = unhash_search(newop,newme,next_empty,false);
+            
+            if(rec < 0) return 1;
+            if(rec == 0) draw = true;
+        }
+    } else{
+        for(int u = 1; u < empty_count; u++) next_empty[u-1] = empty[u];
+        for(int u = 0; u < empty_count; u++){
+            if(u) next_empty[u-1] = empty[u-1];
+            ull newme = me, newop = op;
+            if(!unhash_change_board(newme,newop,empty[u])) continue;
+            
+            can_put = true;
+            int rec = unhash_search(newop,newme,next_empty,false);
+            if(rec < 0) return 1;
+            if(rec == 0) draw = true;
+        }
     }
     if(can_put) return draw?0:-1;
     if(suc) return __builtin_popcountll(me)-__builtin_popcountll(op);
@@ -111,15 +146,26 @@ int hash_search(ull me, ull op, int empty[EMPTY_AREA+1], bool suc, int depth){
     hash_search_counter++;
 #endif
     empty_count = 64-empty_count;
+    pair<int,int> now_empty[EMPTY_AREA+1];
+    rep(i,empty_count) now_empty[i].second = empty[i];
     int next_empty[EMPTY_AREA+1];
     bool draw = false, can_put = false;
-    for(int u = 1; u < empty_count; u++) next_empty[u-1] = empty[u];
     rep(u,empty_count){
-        if(u) next_empty[u-1] = empty[u-1];
         ull newme = me, newop = op;
-        if(!unhash_change_board(newme,newop,empty[u])) continue;
-            
+        if(!unhash_change_board(newme,newop,empty[u])){
+            now_empty[u].first = 100;
+            continue;
+        }
+        now_empty[u].first = how_many_canput(newop, newme, empty, empty_count);
         can_put = true;
+    }
+    sort(now_empty,now_empty+empty_count);
+    for(int u = 1; u < empty_count; u++) next_empty[u-1] = now_empty[u].second;
+    rep(u,empty_count){
+        if(now_empty[u].first == 100) break;
+        if(u) next_empty[u-1] = now_empty[u-1].second;
+        ull newme = me, newop = op;
+        unhash_change_board(newme,newop,now_empty[u].second);
         int rec;
         if(depth >= HASH_DEPTH) rec = unhash_search(newop,newme,next_empty,false);
         else rec = hash_search(newop,newme,next_empty,false,depth+1);
@@ -135,20 +181,35 @@ int hash_search(ull me, ull op, int empty[EMPTY_AREA+1], bool suc, int depth){
 int firstsearch(ull me, ull op){
     int ret = INF;
     int empty[EMPTY_AREA+1], next_empty[EMPTY_AREA+1];
-    int counter = 0;
+    int empty_count = 0;
     rep(i,8) rep(j,8) if(!((me|op)&(1ULL<<(i*8+j)))){
-        if(counter) next_empty[counter-1] = i*8+j;
-        empty[counter++] = i*8+j;
+        if(empty_count) next_empty[empty_count-1] = i*8+j;
+        empty[empty_count++] = i*8+j;
     }
-    empty[counter] = -1;
-    next_empty[counter-1] = -1;
-    rep(u,counter){
-        if(u) next_empty[u-1] = empty[u-1];
+    empty[empty_count] = -1;
+    next_empty[empty_count-1] = -1;
+    pair<int,int> now_empty[EMPTY_AREA+1];
+    rep(i,empty_count) now_empty[i].second = empty[i];
+    bool draw = false, can_put = false;
+    rep(u,empty_count){
         ull newme = me, newop = op;
         if(!unhash_change_board(newme,newop,empty[u])){
+            now_empty[u].first = 100;
             continue;
         }
-        cout << empty[u]/8 << " " << empty[u]%8 << " " << hash_table.size() << endl;
+        now_empty[u].first = how_many_canput(newop, newme, empty, empty_count);
+        can_put = true;
+    }
+    sort(now_empty,now_empty+empty_count);
+    for(int u = 1; u < empty_count; u++) next_empty[u-1] = now_empty[u].second;
+    rep(u,empty_count){
+        if(now_empty[u].first == 100) break;
+        if(u) next_empty[u-1] = now_empty[u-1].second;
+        ull newme = me, newop = op;
+        unhash_change_board(newme,newop,now_empty[u].second);
+        
+        cout << now_empty[u].second/8 << " " << now_empty[u].second%8 << " " << hash_table.size() << endl;
+        
         int rec = hash_search(newop,newme,next_empty,false,1);
         if(rec == 0) ret = -(empty[u]+1);
         else if(rec < 0) return (empty[u]+1);

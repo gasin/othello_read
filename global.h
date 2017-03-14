@@ -2,7 +2,13 @@
 #define GLOBAL_H
 //#define DEBUG
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cmath>
+#include <random>
+#include <unordered_map>
+#include <chrono>
+#include <string.h>
+#include <algorithm>
 #define rep(i,n) for(int i = 0; i < n; i++)
 using namespace std;
 typedef long long ll;

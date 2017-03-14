@@ -20,6 +20,7 @@ int main(){
     bool first_turn; //1..black, 0..white
     ull black = 0, white = 0;
     input(first_turn, black, white);
+    cout << black << " " << white << endl;
     
     int result;
     if(first_turn) result = firstsearch(black,white);
