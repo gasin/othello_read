@@ -6,7 +6,7 @@
 　もし勝つor引き分けることができるならばそれを判定し、そのための次の手を出力します。  
 　もし負けることが確定しているのならばそのことを出力します。  
 
-　一部コードにおいてprimenumberさんのプログラム[issen](https://github.com/primenumber/issen)を使わせていただきました。  
+　一部primenumberさんの[ブログ](http://primenumber.hatenadiary.jp/entry/2016/12/26/063226)のコードを使わせていただきました。  
 　issenのほうが僕のプログラムより優秀なのでガチの方は参考にするとよいと思います。
 
 ## 入力フォーマット
